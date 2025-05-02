@@ -6,6 +6,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 
 /**
  * AWS S3에 접근하기 위해 필요한 인증 정보와 리전 설정을 구성하는 클래스 <br>
@@ -16,11 +17,9 @@ public class S3Config {
 
     private static final Logger logger = LoggerFactory.getLogger(S3Config.class);
 
-    private static final String DEFAULT_REGION = "ap-northeast-2";
-
     private String accessKey;
     private String secretKey;
-    private String region = DEFAULT_REGION;
+    private Region region = Region.AP_NORTHEAST_2;
     private AwsCredentialsProvider credentialsProvider;
 
     private S3Config() {
@@ -45,7 +44,7 @@ public class S3Config {
          * 리전 설정 (기본값: ap-northeast-2)
          */
         public Builder withRegion(String region) {
-            config.region = region;
+            config.region = Region.of(region);
             return this;
         }
 
@@ -68,7 +67,7 @@ public class S3Config {
 
     }
 
-    public String getRegion() {
+    public Region getRegion() {
         return region;
     }
 
