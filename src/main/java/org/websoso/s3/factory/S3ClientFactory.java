@@ -9,7 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class S3ClientFactory {
     private static final Map<String, S3Client> clientCache = new ConcurrentHashMap<>();
 
-    private S3ClientFactory() { } // 인스턴스화 방지
+    private S3ClientFactory() {
+
+    }
 
     public static S3Client getS3Client(S3Config s3Config) {
         String cacheKey = generateCacheKey(s3Config);
