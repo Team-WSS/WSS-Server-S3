@@ -23,16 +23,16 @@ import software.amazon.awssdk.regions.Region;
  *
  * @see Builder
  */
-public class S3Config {
+public class S3AccessConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(S3Config.class);
+    private static final Logger logger = LoggerFactory.getLogger(S3AccessConfig.class);
 
     private String accessKey;
     private String secretKey;
     private Region region = Region.AP_NORTHEAST_2;
     private AwsCredentialsProvider credentialsProvider;
 
-    private S3Config() {
+    private S3AccessConfig() {
 
     }
 
@@ -50,7 +50,7 @@ public class S3Config {
      */
     public static class Builder {
 
-        private final S3Config config = new S3Config();
+        private final S3AccessConfig config = new S3AccessConfig();
 
         public static Builder builder() {
             return new Builder();
@@ -99,7 +99,7 @@ public class S3Config {
         }
 
         /**
-         * 설정된 정보로 {@link S3Config} 객체를 생성합니다.
+         * 설정된 정보로 {@link S3AccessConfig} 객체를 생성합니다.
          * <p>
          * 액세스 키와 시크릿 키가 지정된 경우 {@link StaticCredentialsProvider}를 사용하며,
          * 그렇지 않은 경우 {@link DefaultCredentialsProvider}를 사용합니다.
@@ -110,11 +110,11 @@ public class S3Config {
          * 유효한 자격 증명을 찾지 못하면 {@link AwsCredentialsNotFoundException}이 발생합니다.
          * </p>
          *
-         * @return 구성된 {@link S3Config} 인스턴스
+         * @return 구성된 {@link S3AccessConfig} 인스턴스
          * @throws AwsCredentialsNotFoundException 기본 자격 증명 체인에서 자격 증명을 찾지 못한 경우
          * @throws AwsRegionNotFoundException      리전이 유효하지 않은 경우
          */
-        public S3Config build() {
+        public S3AccessConfig build() {
             validateRegion();
             config.credentialsProvider = resolveCredentialsProvider();
             return config;
