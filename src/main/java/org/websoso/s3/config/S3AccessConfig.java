@@ -37,6 +37,15 @@ public class S3AccessConfig {
     }
 
     /**
+     * {@link Builder} 인스턴스를 생성합니다.
+     *
+     * @return {@link Builder} 인스턴스
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * {@code S3Config}를 구성하기 위한 빌더 클래스입니다.
      * <p>
      * 설정 가능한 항목은 다음과 같습니다:
@@ -47,14 +56,19 @@ public class S3AccessConfig {
      *       {@link software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider}를 사용합니다.</li>
      * </ul>
      * </p>
+     *
+     * <p>예시 사용법:</p>
+     *  <pre>{@code
+     *  S3AccessConfig config = S3AccessConfig.builder()
+     *      .withRegion("us-west-2")
+     *      .withCredentials("ACCESS_KEY", "SECRET_KEY")
+     *      .build();
+     *  }</pre>
+     *
      */
     public static class Builder {
 
         private final S3AccessConfig config = new S3AccessConfig();
-
-        public static Builder builder() {
-            return new Builder();
-        }
 
         /**
          * 액세스 키와 시크릿 키를 설정합니다.
