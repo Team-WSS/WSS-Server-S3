@@ -2,8 +2,14 @@ plugins {
     id 'java'
 }
 
-group = 'org.websoso'
+group = 'com.github.Team-WSS'
 version = '0.0.1'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 
 repositories {
     mavenCentral()
