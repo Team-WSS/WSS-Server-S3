@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
 }
 
 group = 'com.github.Team-WSS'
@@ -16,8 +16,8 @@ repositories {
 }
 
 dependencies {
-    implementation platform('software.amazon.awssdk:bom:2.27.21')
-    implementation 'software.amazon.awssdk:s3'
+    api platform('software.amazon.awssdk:bom:2.27.21')
+    api 'software.amazon.awssdk:s3'
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
