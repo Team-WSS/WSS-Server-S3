@@ -1,5 +1,6 @@
 package org.websoso.s3.core;
 
+import org.websoso.s3.exception.InvalidImageException;
 import org.websoso.s3.modle.S3UploadResponse;
 import org.websoso.s3.modle.S3UploadResult;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -126,27 +127,27 @@ public class S3ImageService implements S3DefaultService {
 
     private void validateImage(File file) {
         if (file == null || !file.exists() || !file.isFile()) {
-            throw new IllegalArgumentException("Image File must exist and be a valid file");
+            throw new InvalidImageException("Image File must exist and be a valid file");
         }
 
         if (file.length() <= 0) {
-            throw new IllegalArgumentException("Image File size must be greater than 0");
+            throw new InvalidImageException("Image File size must be greater than 0");
         }
 
         if (file.length() > MAX_IMAGE_SIZE_BYTE) {
-            throw new IllegalArgumentException("Image File size exceeds the limit");
+            throw new InvalidImageException("Image File size exceeds the limit");
         }
 
         String extension = getFileExtension(file);
         boolean extensionAllowed = ALLOWED_IMAGE_EXTENSIONS.contains(extension);
         if (!extensionAllowed) {
-            throw new IllegalArgumentException("Image File type not allowed: extension " + extension);
+            throw new InvalidImageException("Image File type not allowed: extension " + extension);
         }
 
         String detectedMimeType = detectMimeType(file);
         boolean mimeAllowed = ALLOWED_IMAGE_MIME_TYPES.contains(detectedMimeType);
         if (!mimeAllowed) {
-            throw new IllegalArgumentException("Image File type not allowed: MIME type " + detectedMimeType);
+            throw new InvalidImageException("Image File type not allowed: MIME type " + detectedMimeType);
         }
     }
 
@@ -158,21 +159,21 @@ public class S3ImageService implements S3DefaultService {
 
     private void validateContentType(String contentType) {
         if (contentType == null || contentType.isBlank()) {
-            throw new IllegalArgumentException("Content type must not be null or empty");
+            throw new InvalidImageException("Content type must not be null or empty");
         }
 
         if (!ALLOWED_IMAGE_MIME_TYPES.contains(contentType.toLowerCase())) {
-            throw new IllegalArgumentException("Image File type not allowed: MIME type " + contentType);
+            throw new InvalidImageException("Image File type not allowed: MIME type " + contentType);
         }
     }
 
     private void validateContentLength(long contentLength) {
         if (contentLength <= 0) {
-            throw new IllegalArgumentException("Content length must be greater than 0");
+            throw new InvalidImageException("Content length must be greater than 0");
         }
 
         if (contentLength > MAX_IMAGE_SIZE_BYTE) {
-            throw new IllegalArgumentException("Image File size exceeds the limit");
+            throw new InvalidImageException("Image File size exceeds the limit");
         }
     }
 
@@ -180,7 +181,7 @@ public class S3ImageService implements S3DefaultService {
         String fileName = file.getName();
         int index = fileName.lastIndexOf('.');
         if (index == -1) {
-            throw new IllegalArgumentException("Image File has no extension: " + fileName);
+            throw new InvalidImageException("Image File has no extension: " + fileName);
         }
         return fileName.substring(index).toLowerCase();
     }
