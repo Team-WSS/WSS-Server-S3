@@ -1,5 +1,6 @@
 package org.websoso.s3.core;
 
+import org.websoso.s3.exception.InvalidFileException;
 import org.websoso.s3.modle.S3UploadResponse;
 import org.websoso.s3.modle.S3UploadResult;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -123,11 +124,11 @@ public class S3FileService implements S3DefaultService {
 
     private void validateFile(File file) {
         if (file == null || !file.exists() || !file.isFile()) {
-            throw new IllegalArgumentException("File must exist and be a valid file");
+            throw new InvalidFileException("File must exist and be a valid file");
         }
 
         if (file.length() <= 0) {
-            throw new IllegalArgumentException("File size must be greater than 0");
+            throw new InvalidFileException("File size must be greater than 0");
         }
     }
 
@@ -139,13 +140,13 @@ public class S3FileService implements S3DefaultService {
 
     private void validateContentType(String contentType) {
         if (contentType == null || contentType.isBlank()) {
-            throw new IllegalArgumentException("Content type must not be null or empty");
+            throw new InvalidFileException("Content type must not be null or empty");
         }
     }
 
     private void validateContentLength(long contentLength) {
         if (contentLength <= 0) {
-            throw new IllegalArgumentException("Content length must be greater than 0");
+            throw new InvalidFileException("Content length must be greater than 0");
         }
     }
 
