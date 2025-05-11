@@ -7,7 +7,16 @@ import java.util.stream.Collectors;
 enum ImageType {
     JPG("jpg", "image/jpeg"),
     JPEG("jpeg", "image/jpeg"),
-    PNG("png", "image/png");
+    PNG("png", "image/png"),
+    GIF("gif", "image/gif"),
+    BMP("bmp", "image/bmp"),
+    TIFF("tiff", "image/tiff"),
+    PSD("psd", "image/vnd.adobe.photoshop"),
+    BPG("bpg", "image/bpg"),
+    WEBP("webp", "image/webp"),
+    ICNS("icns", "image/icns"),
+    WMF("wmf", "image/wmf"),
+    EMF("emf", "image/emf");
 
     private final String extension;
     private final String mimeType;
