@@ -6,6 +6,7 @@ import org.websoso.s3.modle.S3UploadResult;
 import software.amazon.awssdk.services.s3.S3Client;
 import org.apache.tika.Tika;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,7 @@ public class S3ImageService implements S3DefaultService {
     private static final Tika tika = new Tika();
     private static final Set<String> ALLOWED_IMAGE_MIME_TYPES = ImageType.getAllowedMimeTypes();
     private static final Set<String> ALLOWED_IMAGE_EXTENSIONS = ImageType.getAllowedExtensions();
+    private static final int IMAGE_MIME_DETECTION_LIMIT = 2048;
 
     public S3ImageService(S3Client s3Client, String bucket) {
         this.uploader = new S3Uploader(s3Client, bucket);
@@ -96,6 +98,7 @@ public class S3ImageService implements S3DefaultService {
     public S3UploadResult upload(String key, InputStream inputStream, String contentType, long contentLength) {
         validateKey(key);
         validateInputStream(inputStream);
+        validateImage(inputStream);
         validateContentType(contentType);
         validateContentLength(contentLength);
 
@@ -162,6 +165,25 @@ public class S3ImageService implements S3DefaultService {
     private void validateContentLength(long contentLength) {
         if (contentLength <= 0) {
             throw new InvalidImageException("Content length must be greater than 0");
+        }
+    }
+
+    private void validateImage(InputStream inputStream) {
+        try {
+            if (!inputStream.markSupported()) {
+                throw new IllegalArgumentException("InputStream must support mark/reset");
+            }
+
+            inputStream.mark(IMAGE_MIME_DETECTION_LIMIT);
+
+            String detectedMimeType = tika.detect(inputStream);
+            if (!ALLOWED_IMAGE_MIME_TYPES.contains(detectedMimeType)) {
+                throw new InvalidImageException("Image File type not allowed: detected MIME type " + detectedMimeType);
+            }
+
+            inputStream.reset();
+        } catch (IOException e) {
+            throw new InvalidImageException("Failed to detect MIME type from InputStream", e);
         }
     }
 
