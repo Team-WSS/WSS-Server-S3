@@ -50,21 +50,6 @@ class S3ImageServiceTest {
                 .isInstanceOf(InvalidImageException.class);
     }
 
-    @DisplayName("지원하는 용량을 넘으면 예외를 던진다")
-    @Test
-    void uploadFile_exceedsMaxSize_throwsException() {
-        // given
-        String key = "images/large.jpg";
-        InputStream dummyInputStream = new ByteArrayInputStream("dummy".getBytes());
-        long tooLargeSize = 10 * 1024 * 1024; // 10MB
-
-        // when & then
-        assertThatThrownBy(() ->
-                imageService.upload(key, dummyInputStream, "image/jpeg", tooLargeSize))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("size exceeds the limit");
-    }
-
     @DisplayName("확장자는 jpg이더라도, 실제 MimeType이 지원되지 않는 타입이면 예외를 던진다")
     @Test
     void upload_fakeJpgFile_shouldThrowMimeTypeException() {

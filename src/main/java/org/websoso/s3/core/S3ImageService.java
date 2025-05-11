@@ -18,7 +18,6 @@ import org.websoso.s3.mime_type.ImageType;
  * <p>
  * 타입은 정해진 이미지 타입 {@link #ALLOWED_IMAGE_MIME_TYPES} {@link #ALLOWED_IMAGE_EXTENSIONS} 만을 지원하며,
  * 업로드는 {@link File} 또는 {@link InputStream}을 통한 입력을 지원합니다.
- * 업로드 할 이미지 용량은 최대 사이즈 제한 {@link #MAX_IMAGE_SIZE_BYTE} 이 있습니다.
  * 업로드 결과는 {@link S3UploadResult}로 반환됩니다.
  * </p>
  */
@@ -30,7 +29,6 @@ public class S3ImageService implements S3DefaultService {
     private static final Tika tika = new Tika();
     private static final Set<String> ALLOWED_IMAGE_MIME_TYPES = ImageType.getAllowedMimeTypes();
     private static final Set<String> ALLOWED_IMAGE_EXTENSIONS = ImageType.getAllowedExtensions();
-    private static final long MAX_IMAGE_SIZE_BYTE = 5 * 1024 * 1024; // 5MB
 
     public S3ImageService(S3Client s3Client, String bucket) {
         this.uploader = new S3Uploader(s3Client, bucket);
@@ -44,7 +42,7 @@ public class S3ImageService implements S3DefaultService {
      * @param key  객체 키 (경로 포함)
      * @param file 업로드할 파일
      * @return 업로드 결과를 담은 {@link S3UploadResult} 객체
-     * @throws IllegalArgumentException 매개변수가 null이거나 빈 문자열인 경우, 규정된 이미지 형식 또는 크기를 벗어난 경우
+     * @throws IllegalArgumentException 매개변수가 null이거나 빈 문자열인 경우, 규정된 이미지 형식을 벗어난 경우
      */
     @Override
     public S3UploadResult upload(String key, File file) {
@@ -68,7 +66,7 @@ public class S3ImageService implements S3DefaultService {
      * @param file        업로드할 파일
      * @param contentType 컨텐츠 타입 (MIME 타입)
      * @return 업로드 결과를 담은 {@link S3UploadResult} 객체
-     * @throws IllegalArgumentException 매개변수가 null이거나 빈 문자열인 경우, 규정된 이미지 형식 또는 크기를 벗어난 경우
+     * @throws IllegalArgumentException 매개변수가 null이거나 빈 문자열인 경우, 규정된 이미지 형식을 벗어난 경우
      */
     @Override
     public S3UploadResult upload(String key, File file, String contentType) {
@@ -94,7 +92,7 @@ public class S3ImageService implements S3DefaultService {
      * @param contentType   컨텐츠 타입 (MIME 타입)
      * @param contentLength 컨텐츠 길이 (바이트)
      * @return 업로드 결과를 담은 {@link S3UploadResult} 객체
-     * @throws IllegalArgumentException 매개변수가 null이거나 빈 문자열인 경우, 규정된 이미지 형식 또는 크기를 벗어난 경우
+     * @throws IllegalArgumentException 매개변수가 null이거나 빈 문자열인 경우, 규정된 이미지 형식을 벗어난 경우
      */
     @Override
     public S3UploadResult upload(String key, InputStream inputStream, String contentType, long contentLength) {
@@ -134,10 +132,6 @@ public class S3ImageService implements S3DefaultService {
             throw new InvalidImageException("Image File size must be greater than 0");
         }
 
-        if (file.length() > MAX_IMAGE_SIZE_BYTE) {
-            throw new InvalidImageException("Image File size exceeds the limit");
-        }
-
         String extension = getFileExtension(file);
         boolean extensionAllowed = ALLOWED_IMAGE_EXTENSIONS.contains(extension);
         if (!extensionAllowed) {
@@ -170,10 +164,6 @@ public class S3ImageService implements S3DefaultService {
     private void validateContentLength(long contentLength) {
         if (contentLength <= 0) {
             throw new InvalidImageException("Content length must be greater than 0");
-        }
-
-        if (contentLength > MAX_IMAGE_SIZE_BYTE) {
-            throw new InvalidImageException("Image File size exceeds the limit");
         }
     }
 
