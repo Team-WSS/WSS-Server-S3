@@ -1,10 +1,10 @@
-package org.websoso.s3.mime_type;
+package org.websoso.s3.core;
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public enum ImageType {
+enum ImageType {
     JPG("jpg", "image/jpeg"),
     JPEG("jpeg", "image/jpeg"),
     PNG("png", "image/png");
@@ -17,24 +17,23 @@ public enum ImageType {
         this.mimeType = mimeType;
     }
 
-    public String getExtension() {
+    String getExtension() {
         return extension;
     }
 
-    public String getMimeType() {
+    String getMimeType() {
         return mimeType;
     }
 
-    public static Set<String> getAllowedMimeTypes() {
+    static Set<String> getAllowedMimeTypes() {
         return Arrays.stream(values())
                 .map(ImageType::getMimeType)
                 .collect(Collectors.toSet());
     }
 
-    public static Set<String> getAllowedExtensions() {
+    static Set<String> getAllowedExtensions() {
         return Arrays.stream(values())
                 .map(imageType -> "." + imageType.getExtension().toLowerCase())
                 .collect(Collectors.toSet());
     }
-
 }

@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.websoso.s3.mime_type.ImageType;
-
 /**
  * S3 파일 업로드 및 삭제를 위한 S3DefaultService 인터페이스의 구현체 입니다.
  * <p>
