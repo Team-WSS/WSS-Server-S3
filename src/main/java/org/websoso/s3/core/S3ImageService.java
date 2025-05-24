@@ -1,12 +1,11 @@
 package org.websoso.s3.core;
 
+import org.websoso.s3.core.strategy.MimeTypeDetectionStrategy;
 import org.websoso.s3.exception.InvalidImageException;
 import org.websoso.s3.modle.S3UploadResponse;
 import org.websoso.s3.modle.S3UploadResult;
 import software.amazon.awssdk.services.s3.S3Client;
-import org.apache.tika.Tika;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,15 +24,15 @@ public class S3ImageService implements S3DefaultService {
     private final S3Uploader uploader;
     private final S3Remover remover;
     private final S3Reader reader;
-    private static final Tika tika = new Tika();
+    private final MimeTypeDetectionStrategy mimeDetector;
     private static final Set<String> ALLOWED_IMAGE_MIME_TYPES = ImageType.getAllowedMimeTypes();
     private static final Set<String> ALLOWED_IMAGE_EXTENSIONS = ImageType.getAllowedExtensions();
-    private static final int IMAGE_MIME_DETECTION_LIMIT = 2048;
 
-    public S3ImageService(S3Client s3Client, String bucket) {
+    public S3ImageService(S3Client s3Client, String bucket, MimeTypeDetectionStrategy mimeDetector) {
         this.uploader = new S3Uploader(s3Client, bucket);
         this.remover = new S3Remover(s3Client, bucket);
         this.reader = new S3Reader(s3Client, bucket);
+        this.mimeDetector = mimeDetector;
     }
 
     /**
@@ -139,7 +138,12 @@ public class S3ImageService implements S3DefaultService {
             throw new InvalidImageException("Image File type not allowed: extension " + extension);
         }
 
-        String detectedMimeType = detectMimeType(file);
+        String detectedMimeType;
+        try {
+            detectedMimeType = mimeDetector.detect(file);
+        } catch (IOException e) {
+            throw new InvalidImageException("Failed to detect MIME type", e);
+        }
         boolean mimeAllowed = ALLOWED_IMAGE_MIME_TYPES.contains(detectedMimeType);
         if (!mimeAllowed) {
             throw new InvalidImageException("Image File type not allowed: MIME type " + detectedMimeType);
@@ -170,18 +174,11 @@ public class S3ImageService implements S3DefaultService {
 
     private void validateImage(InputStream inputStream) {
         try {
-            if (!inputStream.markSupported()) {
-                throw new IllegalArgumentException("InputStream must support mark/reset");
-            }
+            String detectedMimeType = mimeDetector.detect(inputStream);
 
-            inputStream.mark(IMAGE_MIME_DETECTION_LIMIT);
-
-            String detectedMimeType = tika.detect(inputStream);
             if (!ALLOWED_IMAGE_MIME_TYPES.contains(detectedMimeType)) {
                 throw new InvalidImageException("Image File type not allowed: detected MIME type " + detectedMimeType);
             }
-
-            inputStream.reset();
         } catch (IOException e) {
             throw new InvalidImageException("Failed to detect MIME type from InputStream", e);
         }
@@ -194,13 +191,5 @@ public class S3ImageService implements S3DefaultService {
             throw new InvalidImageException("Image File has no extension: " + fileName);
         }
         return fileName.substring(index).toLowerCase();
-    }
-
-    private String detectMimeType(File file) {
-        try {
-            return tika.detect(file);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to detect MIME type with Tika", e);
-        }
     }
 }
