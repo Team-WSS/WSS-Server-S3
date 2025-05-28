@@ -70,19 +70,19 @@ public class S3Uploader {
         }
     }
 
-    public S3UploadResponse upload(String key, InputStream inputStream, ContentType contentType, long contentLength) {
+    public S3UploadResponse upload(String key, InputStream inputStream, ContentType contentType, ContentLength contentLength) {
 
-        log.debug("Uploading input stream to S3: bucket={}, key={}, contentType={}, contentLength={}", bucket, key, contentType.getValue(), contentLength);
+        log.debug("Uploading input stream to S3: bucket={}, key={}, contentType={}, contentLength={}", bucket, key, contentType.getValue(), contentLength.getValue());
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucket)
                     .key(key)
                     .contentType(contentType.getValue())
-                    .contentLength(contentLength)
+                    .contentLength(contentLength.getValue())
                     .build();
 
-            RequestBody requestBody = RequestBody.fromInputStream(inputStream, contentLength);
+            RequestBody requestBody = RequestBody.fromInputStream(inputStream, contentLength.getValue());
             PutObjectResponse response = s3Client.putObject(putObjectRequest, requestBody);
 
             log.info("Successfully uploaded to S3: bucket={}, key={}", bucket, key);

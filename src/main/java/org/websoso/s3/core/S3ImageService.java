@@ -97,9 +97,8 @@ public class S3ImageService implements S3DefaultService {
         validateKey(key);
         validateInputStream(inputStream);
         validateImage(inputStream);
-        validateContentLength(contentLength);
 
-        S3UploadResponse response = uploader.upload(key, inputStream, ContentType.imageOnlyOf(contentType), contentLength);
+        S3UploadResponse response = uploader.upload(key, inputStream, ContentType.imageOnlyOf(contentType), ContentLength.of(contentLength));
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
@@ -151,12 +150,6 @@ public class S3ImageService implements S3DefaultService {
     private void validateInputStream(InputStream inputStream) {
         if (inputStream == null) {
             throw new IllegalArgumentException("InputStream must not be null");
-        }
-    }
-
-    private void validateContentLength(long contentLength) {
-        if (contentLength <= 0) {
-            throw new InvalidImageException("Content length must be greater than 0");
         }
     }
 
