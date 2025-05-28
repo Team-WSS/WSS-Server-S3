@@ -45,16 +45,17 @@ public class S3ImageService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, File file) {
-        validateKey(key);
         validateImage(file);
 
-        S3UploadResponse response = uploader.upload(key, file);
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, file);
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
         return S3UploadResult.success(response, url);
     }
 
@@ -69,16 +70,17 @@ public class S3ImageService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, File file, String contentType) {
-        validateKey(key);
         validateImage(file);
 
-        S3UploadResponse response = uploader.upload(key, file, ContentType.imageOnlyOf(contentType));
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, file, ContentType.imageOnlyOf(contentType));
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
         return S3UploadResult.success(response, url);
     }
 
@@ -94,30 +96,24 @@ public class S3ImageService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, InputStream inputStream, String contentType, long contentLength) {
-        validateKey(key);
         validateInputStream(inputStream);
         validateImage(inputStream);
 
-        S3UploadResponse response = uploader.upload(key, inputStream, ContentType.imageOnlyOf(contentType), ContentLength.of(contentLength));
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, inputStream, ContentType.imageOnlyOf(contentType), ContentLength.of(contentLength));
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
         return S3UploadResult.success(response, url);
     }
 
     @Override
     public boolean delete(String key) {
-        validateKey(key);
-        return remover.delete(key);
-    }
-
-    private void validateKey(String key) {
-        if (key == null || key.isBlank()) {
-            throw new IllegalArgumentException("Object key must not be null or empty");
-        }
+        return remover.delete(Key.of(key));
     }
 
     private void validateImage(File file) {

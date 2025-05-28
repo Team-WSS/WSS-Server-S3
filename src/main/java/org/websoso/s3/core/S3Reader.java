@@ -13,10 +13,10 @@ public class S3Reader {
         this.bucket = bucket;
     }
 
-    public String getUrl(String key) {
+    public String getUrl(Key key) {
         GetUrlRequest request = GetUrlRequest.builder()
                 .bucket(bucket)
-                .key(key)
+                .key(key.getValue())
                 .build();
 
         return s3Client.utilities().getUrl(request).toString();

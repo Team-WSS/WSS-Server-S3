@@ -37,17 +37,17 @@ public class S3FileService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, File file) {
-
-        validateKey(key);
         validateFile(file);
 
-        S3UploadResponse response = uploader.upload(key, file);
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, file);
 
         if (!response.isSuccess()) {
             S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
 
         return S3UploadResult.success(response, url);
     }
@@ -63,17 +63,17 @@ public class S3FileService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, File file, String contentType) {
-
-        validateKey(key);
         validateFile(file);
 
-        S3UploadResponse response = uploader.upload(key, file, ContentType.of(contentType));
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, file, ContentType.of(contentType));
 
         if (!response.isSuccess()) {
             S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
 
         return S3UploadResult.success(response, url);
     }
@@ -90,17 +90,17 @@ public class S3FileService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, InputStream inputStream, String contentType, long contentLength) {
-
-        validateKey(key);
         validateInputStream(inputStream);
 
-        S3UploadResponse response = uploader.upload(key, inputStream, ContentType.of(contentType), ContentLength.of(contentLength));
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, inputStream, ContentType.of(contentType), ContentLength.of(contentLength));
 
         if (!response.isSuccess()) {
             S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
 
         return S3UploadResult.success(response, url);
 
@@ -108,15 +108,7 @@ public class S3FileService implements S3DefaultService {
 
     @Override
     public boolean delete(String key) {
-        validateKey(key);
-
-        return remover.delete(key);
-    }
-
-    private void validateKey(String key) {
-        if (key == null || key.isBlank()) {
-            throw new IllegalArgumentException("Object key must not be null or empty");
-        }
+        return remover.delete(Key.of(key));
     }
 
     private void validateFile(File file) {

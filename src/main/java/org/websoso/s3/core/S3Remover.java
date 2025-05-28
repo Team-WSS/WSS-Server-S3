@@ -17,24 +17,24 @@ public class S3Remover {
         this.bucket = bucket;
     }
 
-    public boolean delete(String key) {
+    public boolean delete(Key key) {
 
-        log.debug("Deleting object from S3: bucket={}, key={}", bucket, key);
+        log.debug("Deleting object from S3: bucket={}, key={}", bucket, key.getValue());
 
         try {
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucket)
-                    .key(key)
+                    .key(key.getValue())
                     .build();
 
             s3Client.deleteObject(deleteObjectRequest);
 
-            log.info("Successfully deleted object from S3: bucket={}, key={}", bucket, key);
+            log.info("Successfully deleted object from S3: bucket={}, key={}", bucket, key.getValue());
 
             return true;
 
         } catch (Exception e) {
-            log.error("Failed to delete object from S3: bucket={}, key={}", bucket, key, e);
+            log.error("Failed to delete object from S3: bucket={}, key={}", bucket, key.getValue(), e);
             return false;
         }
     }
