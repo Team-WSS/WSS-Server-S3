@@ -66,9 +66,8 @@ public class S3FileService implements S3DefaultService {
 
         validateKey(key);
         validateFile(file);
-        validateContentType(contentType);
 
-        S3UploadResponse response = uploader.upload(key, file, contentType);
+        S3UploadResponse response = uploader.upload(key, file, ContentType.of(contentType));
 
         if (!response.isSuccess()) {
             S3UploadResult.fail(response);
@@ -94,10 +93,9 @@ public class S3FileService implements S3DefaultService {
 
         validateKey(key);
         validateInputStream(inputStream);
-        validateContentType(contentType);
         validateContentLength(contentLength);
 
-        S3UploadResponse response = uploader.upload(key, inputStream, contentType, contentLength);
+        S3UploadResponse response = uploader.upload(key, inputStream, ContentType.of(contentType), contentLength);
 
         if (!response.isSuccess()) {
             S3UploadResult.fail(response);
@@ -135,12 +133,6 @@ public class S3FileService implements S3DefaultService {
     private void validateInputStream(InputStream inputStream) {
         if (inputStream == null) {
             throw new IllegalArgumentException("InputStream must not be null or empty");
-        }
-    }
-
-    private void validateContentType(String contentType) {
-        if (contentType == null || contentType.isBlank()) {
-            throw new InvalidFileException("Content type must not be null or empty");
         }
     }
 

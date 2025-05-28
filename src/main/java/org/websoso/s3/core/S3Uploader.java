@@ -46,15 +46,15 @@ public class S3Uploader {
         }
     }
 
-    public S3UploadResponse upload(String key, File file, String contentType) {
+    public S3UploadResponse upload(String key, File file, ContentType contentType) {
 
-        log.debug("Uploading file to S3: bucket={}, key={}, file={}, contentType={}", bucket, key, file.getName(), contentType);
+        log.debug("Uploading file to S3: bucket={}, key={}, file={}, contentType={}", bucket, key, file.getName(), contentType.getValue());
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucket)
                     .key(key)
-                    .contentType(contentType)
+                    .contentType(contentType.getValue())
                     .contentLength(file.length())
                     .build();
             RequestBody requestBody = RequestBody.fromFile(file);
@@ -70,15 +70,15 @@ public class S3Uploader {
         }
     }
 
-    public S3UploadResponse upload(String key, InputStream inputStream, String contentType, long contentLength) {
+    public S3UploadResponse upload(String key, InputStream inputStream, ContentType contentType, long contentLength) {
 
-        log.debug("Uploading input stream to S3: bucket={}, key={}, contentType={}, contentLength={}", bucket, key, contentType, contentLength);
+        log.debug("Uploading input stream to S3: bucket={}, key={}, contentType={}, contentLength={}", bucket, key, contentType.getValue(), contentLength);
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucket)
                     .key(key)
-                    .contentType(contentType)
+                    .contentType(contentType.getValue())
                     .contentLength(contentLength)
                     .build();
 

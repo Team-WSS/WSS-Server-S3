@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.websoso.s3.core.strategy.PreciseMimeTypeDetectionStrategy;
 import org.websoso.s3.core.strategy.FastMimeTypeDetectionStrategy;
+import org.websoso.s3.exception.InvalidContentTypeException;
 import org.websoso.s3.exception.InvalidImageException;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -47,7 +48,7 @@ class S3ImageServiceTest {
 
         // when & then
         assertThatThrownBy(() -> imageService.upload(key, file, invalidContentType))
-                .isInstanceOf(InvalidImageException.class);
+                .isInstanceOf(InvalidContentTypeException.class);
     }
 
     @DisplayName("확장자는 jpg이더라도, 실제 MimeType이 지원되지 않는 타입이면 예외를 던진다")

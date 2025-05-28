@@ -71,9 +71,8 @@ public class S3ImageService implements S3DefaultService {
     public S3UploadResult upload(String key, File file, String contentType) {
         validateKey(key);
         validateImage(file);
-        validateContentType(contentType);
 
-        S3UploadResponse response = uploader.upload(key, file, contentType);
+        S3UploadResponse response = uploader.upload(key, file, ContentType.imageOnlyOf(contentType));
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
@@ -98,10 +97,9 @@ public class S3ImageService implements S3DefaultService {
         validateKey(key);
         validateInputStream(inputStream);
         validateImage(inputStream);
-        validateContentType(contentType);
         validateContentLength(contentLength);
 
-        S3UploadResponse response = uploader.upload(key, inputStream, contentType, contentLength);
+        S3UploadResponse response = uploader.upload(key, inputStream, ContentType.imageOnlyOf(contentType), contentLength);
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
@@ -153,16 +151,6 @@ public class S3ImageService implements S3DefaultService {
     private void validateInputStream(InputStream inputStream) {
         if (inputStream == null) {
             throw new IllegalArgumentException("InputStream must not be null");
-        }
-    }
-
-    private void validateContentType(String contentType) {
-        if (contentType == null || contentType.isBlank()) {
-            throw new InvalidImageException("Content type must not be null or empty");
-        }
-
-        if (!ALLOWED_IMAGE_MIME_TYPES.contains(contentType.toLowerCase())) {
-            throw new InvalidImageException("Image File type not allowed: MIME type " + contentType);
         }
     }
 
