@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
-public class S3Remover {
+class S3Remover {
 
     private static final Logger log = LoggerFactory.getLogger(S3Remover.class);
 

@@ -3,7 +3,7 @@ package org.websoso.s3.core;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 
-public class S3Reader {
+class S3Reader {
 
     private final S3Client s3Client;
     private final String bucket;

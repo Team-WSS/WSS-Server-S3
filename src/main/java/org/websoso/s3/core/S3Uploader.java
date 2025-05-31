@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.s3.model.*;
 import java.io.File;
 import java.io.InputStream;
 
-public class S3Uploader {
+class S3Uploader {
 
     private static final Logger log = LoggerFactory.getLogger(S3Uploader.class);
 
