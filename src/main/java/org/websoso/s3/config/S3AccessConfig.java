@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.websoso.s3.exception.AwsCredentialsNotFoundException;
 import org.websoso.s3.exception.AwsRegionNotFoundException;
+import org.websoso.s3.modle.AccessKey;
+import org.websoso.s3.modle.SecretKey;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -27,8 +29,8 @@ public class S3AccessConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(S3AccessConfig.class);
 
-    private String accessKey;
-    private String secretKey;
+    private AccessKey accessKey;
+    private SecretKey secretKey;
     private Region region = Region.AP_NORTHEAST_2;
     private AwsCredentialsProvider credentialsProvider;
 
@@ -79,16 +81,8 @@ public class S3AccessConfig {
          * @throws IllegalArgumentException 액세스 키 또는 시크릿 키가 null이거나 빈 문자열인 경우
          */
         public Builder withCredentials(String accessKey, String secretKey) {
-            if (accessKey == null || accessKey.isBlank()) {
-                throw new IllegalArgumentException("Access key must not be null or empty");
-            }
-
-            if (secretKey == null || secretKey.isBlank()) {
-                throw new IllegalArgumentException("Secret key must not be null or empty");
-            }
-
-            config.accessKey = accessKey;
-            config.secretKey = secretKey;
+            config.accessKey = AccessKey.of(accessKey);
+            config.secretKey = SecretKey.of(secretKey);
             return this;
         }
 
@@ -145,7 +139,7 @@ public class S3AccessConfig {
             if (config.accessKey != null && config.secretKey != null) {
                 logger.debug("Using StaticCredentialsProvider with provided access key and secret key");
                 return StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(config.accessKey, config.secretKey)
+                        AwsBasicCredentials.create(config.accessKey.getValue(), config.secretKey.getValue())
                 );
             }
 
