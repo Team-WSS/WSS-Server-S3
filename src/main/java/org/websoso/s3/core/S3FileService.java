@@ -1,6 +1,9 @@
 package org.websoso.s3.core;
 
+import org.websoso.s3.config.S3AccessConfig;
 import org.websoso.s3.exception.InvalidFileException;
+import org.websoso.s3.factory.S3ClientFactory;
+import org.websoso.s3.modle.Bucket;
 import org.websoso.s3.modle.S3UploadResponse;
 import org.websoso.s3.modle.S3UploadResult;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -22,9 +25,11 @@ public class S3FileService implements S3DefaultService {
     private final S3Reader reader;
 
     public S3FileService(S3Client s3Client, String bucket) {
-        uploader = new S3Uploader(s3Client, bucket);
-        remover = new S3Remover(s3Client, bucket);
-        reader = new S3Reader(s3Client, bucket);
+        Bucket bucketWrapper = Bucket.of(bucket);
+
+        uploader = new S3Uploader(s3Client, bucketWrapper);
+        remover = new S3Remover(s3Client, bucketWrapper);
+        reader = new S3Reader(s3Client, bucketWrapper);
     }
 
     /**

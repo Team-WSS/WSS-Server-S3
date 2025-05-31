@@ -2,6 +2,7 @@ package org.websoso.s3.core;
 
 import org.websoso.s3.core.strategy.MimeTypeDetectionStrategy;
 import org.websoso.s3.exception.InvalidImageException;
+import org.websoso.s3.modle.Bucket;
 import org.websoso.s3.modle.S3UploadResponse;
 import org.websoso.s3.modle.S3UploadResult;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -29,9 +30,11 @@ public class S3ImageService implements S3DefaultService {
     private static final Set<String> ALLOWED_IMAGE_EXTENSIONS = ImageType.getAllowedExtensions();
 
     public S3ImageService(S3Client s3Client, String bucket, MimeTypeDetectionStrategy mimeDetector) {
-        this.uploader = new S3Uploader(s3Client, bucket);
-        this.remover = new S3Remover(s3Client, bucket);
-        this.reader = new S3Reader(s3Client, bucket);
+        Bucket bucketWrapper = Bucket.of(bucket);
+
+        this.uploader = new S3Uploader(s3Client, bucketWrapper);
+        this.remover = new S3Remover(s3Client, bucketWrapper);
+        this.reader = new S3Reader(s3Client, bucketWrapper);
         this.mimeDetector = mimeDetector;
     }
 

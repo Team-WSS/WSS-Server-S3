@@ -2,6 +2,7 @@ package org.websoso.s3.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.websoso.s3.modle.Bucket;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
@@ -10,9 +11,9 @@ class S3Remover {
     private static final Logger log = LoggerFactory.getLogger(S3Remover.class);
 
     private final S3Client s3Client;
-    private final String bucket;
+    private final Bucket bucket;
 
-    public S3Remover(S3Client s3Client, String bucket) {
+    public S3Remover(S3Client s3Client, Bucket bucket) {
         this.s3Client = s3Client;
         this.bucket = bucket;
     }
@@ -23,7 +24,7 @@ class S3Remover {
 
         try {
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucket)
+                    .bucket(bucket.getValue())
                     .key(key.getValue())
                     .build();
 

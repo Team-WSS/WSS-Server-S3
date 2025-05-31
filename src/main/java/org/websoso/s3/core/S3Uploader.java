@@ -3,6 +3,7 @@ package org.websoso.s3.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.websoso.s3.exception.S3UploaderException;
+import org.websoso.s3.modle.Bucket;
 import org.websoso.s3.modle.S3UploadResponse;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -16,9 +17,9 @@ class S3Uploader {
     private static final Logger log = LoggerFactory.getLogger(S3Uploader.class);
 
     private final S3Client s3Client;
-    private final String bucket;
+    private final Bucket bucket;
 
-    public S3Uploader(S3Client s3Client, String bucket) {
+    public S3Uploader(S3Client s3Client, Bucket bucket) {
         this.s3Client = s3Client;
         this.bucket = bucket;
     }
@@ -29,7 +30,7 @@ class S3Uploader {
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(bucket)
+                    .bucket(bucket.getValue())
                     .key(key.getValue())
                     .contentLength(file.length())
                     .build();
@@ -52,7 +53,7 @@ class S3Uploader {
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(bucket)
+                    .bucket(bucket.getValue())
                     .key(key.getValue())
                     .contentType(contentType.getValue())
                     .contentLength(file.length())
@@ -76,7 +77,7 @@ class S3Uploader {
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                    .bucket(bucket)
+                    .bucket(bucket.getValue())
                     .key(key.getValue())
                     .contentType(contentType.getValue())
                     .contentLength(contentLength.getValue())
