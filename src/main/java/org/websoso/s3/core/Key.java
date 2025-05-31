@@ -31,6 +31,14 @@ final class Key {
             throw new InvalidKeyException("Object key must not be null or empty");
         }
 
+        if (value.startsWith("/")) {
+            throw new InvalidKeyException("Object key must be a relative path, not absolute");
+        }
+
+        if (value.endsWith("/")) {
+            throw new InvalidKeyException("Object key must not end with a slash, file name is missing");
+        }
+
         int lengthInBytes = value.getBytes(StandardCharsets.UTF_8).length;
         if (lengthInBytes > MAX_KEY_LENGTH_BYTES) {
             throw new InvalidKeyException("Object key is too long");
