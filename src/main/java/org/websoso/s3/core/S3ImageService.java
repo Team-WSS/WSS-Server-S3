@@ -15,9 +15,8 @@ import java.util.Set;
 /**
  * S3 파일 업로드 및 삭제를 위한 S3DefaultService 인터페이스의 구현체 입니다.
  * <p>
- * 타입은 정해진 이미지 타입 {@link #ALLOWED_IMAGE_MIME_TYPES} {@link #ALLOWED_IMAGE_EXTENSIONS} 만을 지원하며,
- * 업로드는 {@link File} 또는 {@link InputStream}을 통한 입력을 지원합니다.
- * 업로드 결과는 {@link S3UploadResult}로 반환됩니다.
+ * 타입은 정해진 이미지 타입 {@link #ALLOWED_IMAGE_MIME_TYPES} {@link #ALLOWED_IMAGE_EXTENSIONS} 만을 지원하며, 업로드는 {@link File} 또는
+ * {@link InputStream}을 통한 입력을 지원합니다. 업로드 결과는 {@link S3UploadResult}로 반환됩니다.
  * </p>
  */
 public class S3ImageService implements S3DefaultService {
@@ -77,7 +76,7 @@ public class S3ImageService implements S3DefaultService {
 
         Key parsedKey = Key.of(key);
 
-        S3UploadResponse response = uploader.upload(parsedKey, file, ContentType.imageOnlyOf(contentType));
+        S3UploadResponse response = uploader.upload(parsedKey, file, ContentType.of(contentType).requireImage());
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
@@ -104,7 +103,8 @@ public class S3ImageService implements S3DefaultService {
 
         Key parsedKey = Key.of(key);
 
-        S3UploadResponse response = uploader.upload(parsedKey, inputStream, ContentType.imageOnlyOf(contentType), ContentLength.of(contentLength));
+        S3UploadResponse response = uploader.upload(parsedKey, inputStream, ContentType.of(contentType).requireImage(),
+                ContentLength.of(contentLength));
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);

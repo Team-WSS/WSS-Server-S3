@@ -95,7 +95,7 @@ class ContentTypeTest {
         String value = "image/png";
 
         // When
-        ContentType contentType = ContentType.imageOnlyOf(value);
+        ContentType contentType = ContentType.of(value).requireImage();
 
         // Then
         assertThat(contentType.getValue()).isEqualTo(value);
@@ -109,7 +109,7 @@ class ContentTypeTest {
         String value = "application/json";
 
         // When & Then
-        assertThatThrownBy(() -> ContentType.imageOnlyOf(value))
+        assertThatThrownBy(() -> ContentType.of(value).requireImage())
                 .isInstanceOf(InvalidContentTypeException.class)
                 .hasMessage("Only image content types are supported");
     }

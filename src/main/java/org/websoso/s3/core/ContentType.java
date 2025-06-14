@@ -15,13 +15,12 @@ final class ContentType {
         return new ContentType(value);
     }
 
-    public static ContentType imageOnlyOf(String value) {
-        ContentType contentType = new ContentType(value);
-        if (!contentType.isImage()) {
+    public ContentType requireImage() {
+        if (!isImage()) {
             throw new InvalidContentTypeException("Only image content types are supported");
         }
-        return contentType;
 
+        return this;
     }
 
     public String getValue() {
