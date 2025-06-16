@@ -1,6 +1,9 @@
 package org.websoso.s3.core;
 
+import org.websoso.s3.config.S3AccessConfig;
 import org.websoso.s3.exception.InvalidFileException;
+import org.websoso.s3.factory.S3ClientFactory;
+import org.websoso.s3.modle.Bucket;
 import org.websoso.s3.modle.S3UploadResponse;
 import org.websoso.s3.modle.S3UploadResult;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -22,9 +25,11 @@ public class S3FileService implements S3DefaultService {
     private final S3Reader reader;
 
     public S3FileService(S3Client s3Client, String bucket) {
-        uploader = new S3Uploader(s3Client, bucket);
-        remover = new S3Remover(s3Client, bucket);
-        reader = new S3Reader(s3Client, bucket);
+        Bucket bucketWrapper = Bucket.of(bucket);
+
+        uploader = new S3Uploader(s3Client, bucketWrapper);
+        remover = new S3Remover(s3Client, bucketWrapper);
+        reader = new S3Reader(s3Client, bucketWrapper);
     }
 
     /**
@@ -37,17 +42,17 @@ public class S3FileService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, File file) {
-
-        validateKey(key);
         validateFile(file);
 
-        S3UploadResponse response = uploader.upload(key, file);
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, file);
 
         if (!response.isSuccess()) {
             S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
 
         return S3UploadResult.success(response, url);
     }
@@ -63,18 +68,17 @@ public class S3FileService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, File file, String contentType) {
-
-        validateKey(key);
         validateFile(file);
-        validateContentType(contentType);
 
-        S3UploadResponse response = uploader.upload(key, file, contentType);
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, file, ContentType.of(contentType));
 
         if (!response.isSuccess()) {
             S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
 
         return S3UploadResult.success(response, url);
     }
@@ -91,19 +95,17 @@ public class S3FileService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, InputStream inputStream, String contentType, long contentLength) {
-
-        validateKey(key);
         validateInputStream(inputStream);
-        validateContentType(contentType);
-        validateContentLength(contentLength);
 
-        S3UploadResponse response = uploader.upload(key, inputStream, contentType, contentLength);
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, inputStream, ContentType.of(contentType), ContentLength.of(contentLength));
 
         if (!response.isSuccess()) {
             S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
 
         return S3UploadResult.success(response, url);
 
@@ -111,15 +113,7 @@ public class S3FileService implements S3DefaultService {
 
     @Override
     public boolean delete(String key) {
-        validateKey(key);
-
-        return remover.delete(key);
-    }
-
-    private void validateKey(String key) {
-        if (key == null || key.isBlank()) {
-            throw new IllegalArgumentException("Object key must not be null or empty");
-        }
+        return remover.delete(Key.of(key));
     }
 
     private void validateFile(File file) {
@@ -135,18 +129,6 @@ public class S3FileService implements S3DefaultService {
     private void validateInputStream(InputStream inputStream) {
         if (inputStream == null) {
             throw new IllegalArgumentException("InputStream must not be null or empty");
-        }
-    }
-
-    private void validateContentType(String contentType) {
-        if (contentType == null || contentType.isBlank()) {
-            throw new InvalidFileException("Content type must not be null or empty");
-        }
-    }
-
-    private void validateContentLength(long contentLength) {
-        if (contentLength <= 0) {
-            throw new InvalidFileException("Content length must be greater than 0");
         }
     }
 

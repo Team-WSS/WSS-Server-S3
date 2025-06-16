@@ -2,6 +2,7 @@ package org.websoso.s3.core;
 
 import org.websoso.s3.core.strategy.MimeTypeDetectionStrategy;
 import org.websoso.s3.exception.InvalidImageException;
+import org.websoso.s3.modle.Bucket;
 import org.websoso.s3.modle.S3UploadResponse;
 import org.websoso.s3.modle.S3UploadResult;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -14,9 +15,8 @@ import java.util.Set;
 /**
  * S3 파일 업로드 및 삭제를 위한 S3DefaultService 인터페이스의 구현체 입니다.
  * <p>
- * 타입은 정해진 이미지 타입 {@link #ALLOWED_IMAGE_MIME_TYPES} {@link #ALLOWED_IMAGE_EXTENSIONS} 만을 지원하며,
- * 업로드는 {@link File} 또는 {@link InputStream}을 통한 입력을 지원합니다.
- * 업로드 결과는 {@link S3UploadResult}로 반환됩니다.
+ * 타입은 정해진 이미지 타입 {@link #ALLOWED_IMAGE_MIME_TYPES} {@link #ALLOWED_IMAGE_EXTENSIONS} 만을 지원하며, 업로드는 {@link File} 또는
+ * {@link InputStream}을 통한 입력을 지원합니다. 업로드 결과는 {@link S3UploadResult}로 반환됩니다.
  * </p>
  */
 public class S3ImageService implements S3DefaultService {
@@ -29,9 +29,11 @@ public class S3ImageService implements S3DefaultService {
     private static final Set<String> ALLOWED_IMAGE_EXTENSIONS = ImageType.getAllowedExtensions();
 
     public S3ImageService(S3Client s3Client, String bucket, MimeTypeDetectionStrategy mimeDetector) {
-        this.uploader = new S3Uploader(s3Client, bucket);
-        this.remover = new S3Remover(s3Client, bucket);
-        this.reader = new S3Reader(s3Client, bucket);
+        Bucket bucketWrapper = Bucket.of(bucket);
+
+        this.uploader = new S3Uploader(s3Client, bucketWrapper);
+        this.remover = new S3Remover(s3Client, bucketWrapper);
+        this.reader = new S3Reader(s3Client, bucketWrapper);
         this.mimeDetector = mimeDetector;
     }
 
@@ -45,16 +47,17 @@ public class S3ImageService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, File file) {
-        validateKey(key);
         validateImage(file);
 
-        S3UploadResponse response = uploader.upload(key, file);
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, file);
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
         return S3UploadResult.success(response, url);
     }
 
@@ -69,17 +72,17 @@ public class S3ImageService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, File file, String contentType) {
-        validateKey(key);
         validateImage(file);
-        validateContentType(contentType);
 
-        S3UploadResponse response = uploader.upload(key, file, contentType);
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, file, ContentType.of(contentType).requireImage());
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
         return S3UploadResult.success(response, url);
     }
 
@@ -95,32 +98,25 @@ public class S3ImageService implements S3DefaultService {
      */
     @Override
     public S3UploadResult upload(String key, InputStream inputStream, String contentType, long contentLength) {
-        validateKey(key);
         validateInputStream(inputStream);
         validateImage(inputStream);
-        validateContentType(contentType);
-        validateContentLength(contentLength);
 
-        S3UploadResponse response = uploader.upload(key, inputStream, contentType, contentLength);
+        Key parsedKey = Key.of(key);
+
+        S3UploadResponse response = uploader.upload(parsedKey, inputStream, ContentType.of(contentType).requireImage(),
+                ContentLength.of(contentLength));
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(key);
+        String url = reader.getUrl(parsedKey);
         return S3UploadResult.success(response, url);
     }
 
     @Override
     public boolean delete(String key) {
-        validateKey(key);
-        return remover.delete(key);
-    }
-
-    private void validateKey(String key) {
-        if (key == null || key.isBlank()) {
-            throw new IllegalArgumentException("Object key must not be null or empty");
-        }
+        return remover.delete(Key.of(key));
     }
 
     private void validateImage(File file) {
@@ -153,22 +149,6 @@ public class S3ImageService implements S3DefaultService {
     private void validateInputStream(InputStream inputStream) {
         if (inputStream == null) {
             throw new IllegalArgumentException("InputStream must not be null");
-        }
-    }
-
-    private void validateContentType(String contentType) {
-        if (contentType == null || contentType.isBlank()) {
-            throw new InvalidImageException("Content type must not be null or empty");
-        }
-
-        if (!ALLOWED_IMAGE_MIME_TYPES.contains(contentType.toLowerCase())) {
-            throw new InvalidImageException("Image File type not allowed: MIME type " + contentType);
-        }
-    }
-
-    private void validateContentLength(long contentLength) {
-        if (contentLength <= 0) {
-            throw new InvalidImageException("Content length must be greater than 0");
         }
     }
 

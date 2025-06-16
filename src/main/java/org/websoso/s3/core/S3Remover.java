@@ -2,39 +2,40 @@ package org.websoso.s3.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.websoso.s3.modle.Bucket;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
-public class S3Remover {
+class S3Remover {
 
     private static final Logger log = LoggerFactory.getLogger(S3Remover.class);
 
     private final S3Client s3Client;
-    private final String bucket;
+    private final Bucket bucket;
 
-    public S3Remover(S3Client s3Client, String bucket) {
+    public S3Remover(S3Client s3Client, Bucket bucket) {
         this.s3Client = s3Client;
         this.bucket = bucket;
     }
 
-    public boolean delete(String key) {
+    public boolean delete(Key key) {
 
-        log.debug("Deleting object from S3: bucket={}, key={}", bucket, key);
+        log.debug("Deleting object from S3: bucket={}, key={}", bucket, key.getValue());
 
         try {
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(key)
+                    .bucket(bucket.getValue())
+                    .key(key.getValue())
                     .build();
 
             s3Client.deleteObject(deleteObjectRequest);
 
-            log.info("Successfully deleted object from S3: bucket={}, key={}", bucket, key);
+            log.info("Successfully deleted object from S3: bucket={}, key={}", bucket, key.getValue());
 
             return true;
 
         } catch (Exception e) {
-            log.error("Failed to delete object from S3: bucket={}, key={}", bucket, key, e);
+            log.error("Failed to delete object from S3: bucket={}, key={}", bucket, key.getValue(), e);
             return false;
         }
     }
