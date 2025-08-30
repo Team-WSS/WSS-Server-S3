@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.websoso.s3.exception.InvalidObjectKeyException;
+import org.websoso.s3.exception.validation.InvalidObjectKeyException;
 
 class ObjectKeyTest {
 

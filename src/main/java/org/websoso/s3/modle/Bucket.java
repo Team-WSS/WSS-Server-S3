@@ -3,7 +3,7 @@ package org.websoso.s3.modle;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import org.websoso.s3.exception.InvalidBucketNameException;
+import org.websoso.s3.exception.validation.InvalidBucketNameException;
 
 public final class Bucket {
 

@@ -1,7 +1,7 @@
 package org.websoso.s3.core;
 
 import org.websoso.s3.core.strategy.MimeTypeDetectionStrategy;
-import org.websoso.s3.exception.InvalidImageException;
+import org.websoso.s3.exception.validation.InvalidImageException;
 import org.websoso.s3.modle.Bucket;
 import org.websoso.s3.modle.S3UploadResponse;
 import org.websoso.s3.modle.S3UploadResult;

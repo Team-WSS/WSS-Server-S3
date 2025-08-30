@@ -3,7 +3,7 @@ package org.websoso.s3.core;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import org.websoso.s3.exception.InvalidObjectKeyException;
+import org.websoso.s3.exception.validation.InvalidObjectKeyException;
 
 final class ObjectKey {
 

@@ -1,7 +1,7 @@
 package org.websoso.s3.modle;
 
 import java.util.Objects;
-import org.websoso.s3.exception.InvalidAccessKeyException;
+import org.websoso.s3.exception.validation.InvalidAccessKeyException;
 
 public final class AccessKey {
 

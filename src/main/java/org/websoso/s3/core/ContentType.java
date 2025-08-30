@@ -1,7 +1,7 @@
 package org.websoso.s3.core;
 
 import java.util.Objects;
-import org.websoso.s3.exception.InvalidContentTypeException;
+import org.websoso.s3.exception.validation.InvalidContentTypeException;
 
 final class ContentType {
 

@@ -2,7 +2,7 @@ package org.websoso.s3.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.websoso.s3.exception.S3UploaderException;
+import org.websoso.s3.exception.aws.s3.S3UploaderException;
 import org.websoso.s3.modle.Bucket;
 import org.websoso.s3.modle.S3UploadResponse;
 import software.amazon.awssdk.core.sync.RequestBody;

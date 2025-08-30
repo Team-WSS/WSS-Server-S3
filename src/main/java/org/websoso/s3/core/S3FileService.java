@@ -1,6 +1,6 @@
 package org.websoso.s3.core;
 
-import org.websoso.s3.exception.InvalidFileException;
+import org.websoso.s3.exception.validation.InvalidFileException;
 import org.websoso.s3.modle.Bucket;
 import org.websoso.s3.modle.S3UploadResponse;
 import org.websoso.s3.modle.S3UploadResult;
