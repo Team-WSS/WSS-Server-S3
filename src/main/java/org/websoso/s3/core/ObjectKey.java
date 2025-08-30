@@ -3,53 +3,53 @@ package org.websoso.s3.core;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import org.websoso.s3.exception.InvalidKeyException;
+import org.websoso.s3.exception.InvalidObjectKeyException;
 
-final class Key {
+final class ObjectKey {
 
     private static final int NOT_FOUND = -1;
     private static final int INITIAL_DEPTH = 0;
-    private static final int MAX_KEY_LENGTH_BYTES = 1024;
+    private static final int MAX_OBJECT_KEY_LENGTH_BYTES = 1024;
     private static final Pattern SAFE_CHAR_PATTERN = Pattern.compile("^[a-zA-Z0-9!\\-_.\\*'()\\/]*$");
 
     private final String value;
 
-    private Key(String value) {
-        this.value = validateKey(value);
+    private ObjectKey(String value) {
+        this.value = validatObjectKey(value);
     }
 
-    public static Key of(String value) {
-        return new Key(value);
+    public static ObjectKey of(String value) {
+        return new ObjectKey(value);
     }
 
     public String getValue() {
         return value;
     }
 
-    private String validateKey(String value) {
+    private String validatObjectKey(String value) {
         if (value == null || value.isBlank()) {
-            throw new InvalidKeyException("Object key must not be null or empty");
+            throw new InvalidObjectKeyException("Object key must not be null or empty");
         }
 
         if (value.startsWith("/")) {
-            throw new InvalidKeyException("Object key must be a relative path, not absolute");
+            throw new InvalidObjectKeyException("Object key must be a relative path, not absolute");
         }
 
         if (value.endsWith("/")) {
-            throw new InvalidKeyException("Object key must not end with a slash, file name is missing");
+            throw new InvalidObjectKeyException("Object key must not end with a slash, file name is missing");
         }
 
         int lengthInBytes = value.getBytes(StandardCharsets.UTF_8).length;
-        if (lengthInBytes > MAX_KEY_LENGTH_BYTES) {
-            throw new InvalidKeyException("Object key is too long");
+        if (lengthInBytes > MAX_OBJECT_KEY_LENGTH_BYTES) {
+            throw new InvalidObjectKeyException("Object key is too long");
         }
 
         if (!isValidRelativePath(value)) {
-            throw new InvalidKeyException("Invalid relative path");
+            throw new InvalidObjectKeyException("Invalid relative path");
         }
 
         if (!SAFE_CHAR_PATTERN.matcher(value).matches()) {
-            throw new InvalidKeyException("Object key must contain valid relative path");
+            throw new InvalidObjectKeyException("Object key must contain valid relative path");
         }
 
         return value;
@@ -92,8 +92,8 @@ final class Key {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Key key = (Key) o;
-        return Objects.equals(value, key.value);
+        ObjectKey objectKey = (ObjectKey) o;
+        return Objects.equals(value, objectKey.value);
     }
 
     @Override
@@ -103,7 +103,7 @@ final class Key {
 
     @Override
     public String toString() {
-        return "key = " + value;
+        return "ObjectKey = " + value;
     }
 
 }

@@ -24,21 +24,21 @@ class S3Uploader {
         this.bucket = bucket;
     }
 
-    public S3UploadResponse upload(Key key, File file) {
+    public S3UploadResponse upload(ObjectKey objectKey, File file) {
 
-        log.debug("Uploading file to S3: bucket={}, key={}, file={}", bucket, key.getValue(), file.getName());
+        log.debug("Uploading file to S3: bucket={}, objectKey={}, file={}", bucket, objectKey.getValue(), file.getName());
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucket.getValue())
-                    .key(key.getValue())
+                    .key(objectKey.getValue())
                     .contentLength(file.length())
                     .build();
             RequestBody requestBody = RequestBody.fromFile(file);
 
             PutObjectResponse response = s3Client.putObject(putObjectRequest, requestBody);
 
-            log.info("Successfully uploaded file to S3: bucket={}, key={}", bucket, key.getValue());
+            log.info("Successfully uploaded file to S3: bucket={}, objectKey={}", bucket, objectKey.getValue());
 
             return S3UploadResponse.from(response);
 
@@ -47,14 +47,14 @@ class S3Uploader {
         }
     }
 
-    public S3UploadResponse upload(Key key, File file, ContentType contentType) {
+    public S3UploadResponse upload(ObjectKey objectKey, File file, ContentType contentType) {
 
-        log.debug("Uploading file to S3: bucket={}, key={}, file={}, contentType={}", bucket, key.getValue(), file.getName(), contentType.getValue());
+        log.debug("Uploading file to S3: bucket={}, objectKey={}, file={}, contentType={}", bucket, objectKey.getValue(), file.getName(), contentType.getValue());
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucket.getValue())
-                    .key(key.getValue())
+                    .key(objectKey.getValue())
                     .contentType(contentType.getValue())
                     .contentLength(file.length())
                     .build();
@@ -62,7 +62,7 @@ class S3Uploader {
 
             PutObjectResponse response = s3Client.putObject(putObjectRequest, requestBody);
 
-            log.info("Successfully uploaded file to S3: bucket={}, key={}", bucket, key.getValue());
+            log.info("Successfully uploaded file to S3: bucket={}, objectKey={}", bucket, objectKey.getValue());
 
             return S3UploadResponse.from(response);
 
@@ -71,14 +71,14 @@ class S3Uploader {
         }
     }
 
-    public S3UploadResponse upload(Key key, InputStream inputStream, ContentType contentType, ContentLength contentLength) {
+    public S3UploadResponse upload(ObjectKey objectKey, InputStream inputStream, ContentType contentType, ContentLength contentLength) {
 
-        log.debug("Uploading input stream to S3: bucket={}, key={}, contentType={}, contentLength={}", bucket, key.getValue(), contentType.getValue(), contentLength.getValue());
+        log.debug("Uploading input stream to S3: bucket={}, objectKey={}, contentType={}, contentLength={}", bucket, objectKey.getValue(), contentType.getValue(), contentLength.getValue());
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucket.getValue())
-                    .key(key.getValue())
+                    .key(objectKey.getValue())
                     .contentType(contentType.getValue())
                     .contentLength(contentLength.getValue())
                     .build();
@@ -86,7 +86,7 @@ class S3Uploader {
             RequestBody requestBody = RequestBody.fromInputStream(inputStream, contentLength.getValue());
             PutObjectResponse response = s3Client.putObject(putObjectRequest, requestBody);
 
-            log.info("Successfully uploaded to S3: bucket={}, key={}", bucket, key.getValue());
+            log.info("Successfully uploaded to S3: bucket={}, objectKey={}", bucket, objectKey.getValue());
 
             return S3UploadResponse.from(response);
 

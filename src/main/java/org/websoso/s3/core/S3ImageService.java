@@ -40,56 +40,56 @@ public class S3ImageService implements S3DefaultService {
     /**
      * 이미지 업로드
      *
-     * @param key  객체 키 (경로 포함)
+     * @param objectKey  객체 키 (경로 포함)
      * @param file 업로드할 파일
      * @return 업로드 결과를 담은 {@link S3UploadResult} 객체
      * @throws IllegalArgumentException 매개변수가 null이거나 빈 문자열인 경우, 규정된 이미지 형식을 벗어난 경우
      */
     @Override
-    public S3UploadResult upload(String key, File file) {
+    public S3UploadResult upload(String objectKey, File file) {
         validateImage(file);
 
-        Key parsedKey = Key.of(key);
+        ObjectKey parsedObjectKey = ObjectKey.of(objectKey);
 
-        S3UploadResponse response = uploader.upload(parsedKey, file);
+        S3UploadResponse response = uploader.upload(parsedObjectKey, file);
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(parsedKey);
+        String url = reader.getUrl(parsedObjectKey);
         return S3UploadResult.success(response, url);
     }
 
     /**
      * 이미지 업로드
      *
-     * @param key         객체 키 (경로 포함)
+     * @param objectKey         객체 키 (경로 포함)
      * @param file        업로드할 파일
      * @param contentType 컨텐츠 타입 (MIME 타입)
      * @return 업로드 결과를 담은 {@link S3UploadResult} 객체
      * @throws IllegalArgumentException 매개변수가 null이거나 빈 문자열인 경우, 규정된 이미지 형식을 벗어난 경우
      */
     @Override
-    public S3UploadResult upload(String key, File file, String contentType) {
+    public S3UploadResult upload(String objectKey, File file, String contentType) {
         validateImage(file);
 
-        Key parsedKey = Key.of(key);
+        ObjectKey parsedObjectKey = ObjectKey.of(objectKey);
 
-        S3UploadResponse response = uploader.upload(parsedKey, file, ContentType.of(contentType).requireImage());
+        S3UploadResponse response = uploader.upload(parsedObjectKey, file, ContentType.of(contentType).requireImage());
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(parsedKey);
+        String url = reader.getUrl(parsedObjectKey);
         return S3UploadResult.success(response, url);
     }
 
     /**
      * 이미지 업로드
      *
-     * @param key           객체 키 (경로 포함)
+     * @param objectKey     객체 키 (경로 포함)
      * @param inputStream   업로드할 입력 스트림
      * @param contentType   컨텐츠 타입 (MIME 타입)
      * @param contentLength 컨텐츠 길이 (바이트)
@@ -97,26 +97,26 @@ public class S3ImageService implements S3DefaultService {
      * @throws IllegalArgumentException 매개변수가 null이거나 빈 문자열인 경우, 규정된 이미지 형식을 벗어난 경우
      */
     @Override
-    public S3UploadResult upload(String key, InputStream inputStream, String contentType, long contentLength) {
+    public S3UploadResult upload(String objectKey, InputStream inputStream, String contentType, long contentLength) {
         validateInputStream(inputStream);
         validateImage(inputStream);
 
-        Key parsedKey = Key.of(key);
+        ObjectKey parsedObjectKey = ObjectKey.of(objectKey);
 
-        S3UploadResponse response = uploader.upload(parsedKey, inputStream, ContentType.of(contentType).requireImage(),
+        S3UploadResponse response = uploader.upload(parsedObjectKey, inputStream, ContentType.of(contentType).requireImage(),
                 ContentLength.of(contentLength));
 
         if (!response.isSuccess()) {
             return S3UploadResult.fail(response);
         }
 
-        String url = reader.getUrl(parsedKey);
+        String url = reader.getUrl(parsedObjectKey);
         return S3UploadResult.success(response, url);
     }
 
     @Override
-    public boolean delete(String key) {
-        return remover.delete(Key.of(key));
+    public boolean delete(String objectKey) {
+        return remover.delete(ObjectKey.of(objectKey));
     }
 
     private void validateImage(File file) {

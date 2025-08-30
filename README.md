@@ -114,9 +114,9 @@ public class FileService {
         this.s3Service = s3FileService;
     }
 
-    public String upload(String key, File file) {
+    public String upload(String objectKey, File file) {
         
-        S3UploadResult result = s3Service.upload(key, file);
+        S3UploadResult result = s3Service.upload(objectKey, file);
         
         if (result.isSuccess()) {
             return result.getUrl();
