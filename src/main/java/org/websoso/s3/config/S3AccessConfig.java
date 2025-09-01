@@ -2,8 +2,8 @@ package org.websoso.s3.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.websoso.s3.exception.AwsCredentialsNotFoundException;
-import org.websoso.s3.exception.AwsRegionNotFoundException;
+import org.websoso.s3.exception.aws.global.AwsCredentialsNotFoundException;
+import org.websoso.s3.exception.aws.global.AwsRegionNotFoundException;
 import org.websoso.s3.modle.AccessKey;
 import org.websoso.s3.modle.SecretKey;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;

@@ -67,14 +67,14 @@ dependencies {
 - 자격 증명을 명시하지 않으면, 라이브러리는 환경 변수(`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`), 시스템 프로퍼티 등에서 자동으로 값을 탐색합니다.
 - 리전을 명시하지 않으면 기본값으로 `ap-northeast-2` (서울)가 사용됩니다.
 
-   ```java
-   S3AccessConfig s3Config = S3AccessConfig.builder()
-       .withCredentials("YOUR_ACCESS_KEY", "YOUR_SECRET_KEY")
-       .withRegion("ap-northeast-2")
-       .build();
+```java
+S3AccessConfig s3Config = S3AccessConfig.builder()
+    .withCredentials("YOUR_ACCESS_KEY", "YOUR_SECRET_KEY")
+    .withRegion("ap-northeast-2")
+    .build();
 
-   S3Client s3Client = S3ClientFactory.getS3Client(s3Config);
-   ```
+S3Client s3Client = S3ClientFactory.getS3Client(s3Config);
+```
 
 ### 4.1.2. **서비스 인스턴스 생성**
 - **일반 파일용**: `S3FileService`
@@ -235,7 +235,7 @@ public class MyFileService {
             imageFile.getContentType(),
             imageFile.getSize()
         );
-
+        
         if (result.isSuccess()) {
             return result.getUrl();
         }
