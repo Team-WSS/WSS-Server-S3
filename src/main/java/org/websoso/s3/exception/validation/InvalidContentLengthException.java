@@ -1,4 +1,4 @@
-package org.websoso.s3.exception;
+package org.websoso.s3.exception.validation;
 
 public class InvalidContentLengthException extends RuntimeException {
 

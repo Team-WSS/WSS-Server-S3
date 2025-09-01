@@ -3,10 +3,9 @@ package org.websoso.s3.core;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.websoso.s3.core.strategy.PreciseMimeTypeDetectionStrategy;
 import org.websoso.s3.core.strategy.FastMimeTypeDetectionStrategy;
-import org.websoso.s3.exception.InvalidContentTypeException;
-import org.websoso.s3.exception.InvalidImageException;
+import org.websoso.s3.exception.validation.InvalidContentTypeException;
+import org.websoso.s3.exception.validation.InvalidImageException;
 import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.File;

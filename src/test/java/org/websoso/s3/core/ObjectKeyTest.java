@@ -8,9 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.websoso.s3.exception.InvalidKeyException;
+import org.websoso.s3.exception.validation.InvalidObjectKeyException;
 
-class KeyTest {
+class ObjectKeyTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -32,10 +32,10 @@ class KeyTest {
     @DisplayName("Key 객체를 생성한다.")
     void createValidKey(String validKey) {
         // When
-        Key key = Key.of(validKey);
+        ObjectKey objectKey = ObjectKey.of(validKey);
 
         // Then
-        assertThat(key.getValue()).isEqualTo(validKey);
+        assertThat(objectKey.getValue()).isEqualTo(validKey);
     }
 
     @ParameterizedTest
@@ -44,8 +44,8 @@ class KeyTest {
     @DisplayName("null이거나 빈 문자열로 Key 객체를 생성할 수 없다.")
     void createKeyWithNullOrEmpty(String invalidKey) {
         // When & Then
-        assertThatThrownBy(() -> Key.of(invalidKey))
-                .isInstanceOf(InvalidKeyException.class)
+        assertThatThrownBy(() -> ObjectKey.of(invalidKey))
+                .isInstanceOf(InvalidObjectKeyException.class)
                 .hasMessage("Object key must not be null or empty");
     }
 
@@ -56,10 +56,10 @@ class KeyTest {
         String maxLengthKey = "a".repeat(1024);
 
         // When
-        Key key = Key.of(maxLengthKey);
+        ObjectKey objectKey = ObjectKey.of(maxLengthKey);
 
         // Then
-        assertThat(key.getValue()).isEqualTo(maxLengthKey);
+        assertThat(objectKey.getValue()).isEqualTo(maxLengthKey);
     }
 
     @Test
@@ -69,8 +69,8 @@ class KeyTest {
         String tooLongKey = "a".repeat(1025);
 
         // When & Then
-        assertThatThrownBy(() -> Key.of(tooLongKey))
-                .isInstanceOf(InvalidKeyException.class)
+        assertThatThrownBy(() -> ObjectKey.of(tooLongKey))
+                .isInstanceOf(InvalidObjectKeyException.class)
                 .hasMessage("Object key is too long");
     }
 
@@ -99,8 +99,8 @@ class KeyTest {
     @DisplayName("유효하지 않은 문자로 구성된 문자열로 Key 객체를 생성할 수 없다.")
     void createKeyWithInvalidCharacters(String invalidKey) {
         // When & Then
-        assertThatThrownBy(() -> Key.of(invalidKey))
-                .isInstanceOf(InvalidKeyException.class)
+        assertThatThrownBy(() -> ObjectKey.of(invalidKey))
+                .isInstanceOf(InvalidObjectKeyException.class)
                 .hasMessage("Object key must contain valid relative path");
     }
 
@@ -117,10 +117,10 @@ class KeyTest {
     @DisplayName("유효한 상대 경로 Key 객체를 생성한다.")
     void createKeyWithValidRelativePath(String validPath) {
         // When
-        Key key = Key.of(validPath);
+        ObjectKey objectKey = ObjectKey.of(validPath);
 
         // Then
-        assertThat(key.getValue()).isEqualTo(validPath);
+        assertThat(objectKey.getValue()).isEqualTo(validPath);
     }
 
     @ParameterizedTest
@@ -134,8 +134,8 @@ class KeyTest {
     @DisplayName("상위 디렉토리로 벗어나는 무효한 상대 경로로 Key 객체를 생성할 수 없다.")
     void createKeyWithInvalidRelativePath(String invalidPath) {
         // When & Then
-        assertThatThrownBy(() -> Key.of(invalidPath))
-                .isInstanceOf(InvalidKeyException.class)
+        assertThatThrownBy(() -> ObjectKey.of(invalidPath))
+                .isInstanceOf(InvalidObjectKeyException.class)
                 .hasMessage("Invalid relative path");
     }
 
@@ -148,10 +148,10 @@ class KeyTest {
     void createKeyWhenPathContainsEmptySegmentsButIsValid(String value) {
 
         // When
-        Key key = Key.of(value);
+        ObjectKey objectKey = ObjectKey.of(value);
 
         // Then
-        assertThat(key.getValue()).isEqualTo(value);
+        assertThat(objectKey.getValue()).isEqualTo(value);
     }
 
 
@@ -162,8 +162,8 @@ class KeyTest {
         String koreanKey = "한글파일명.txt";
 
         // When & Then
-        assertThatThrownBy(() -> Key.of(koreanKey))
-                .isInstanceOf(InvalidKeyException.class)
+        assertThatThrownBy(() -> ObjectKey.of(koreanKey))
+                .isInstanceOf(InvalidObjectKeyException.class)
                 .hasMessage("Object key must contain valid relative path");
     }
 
@@ -174,8 +174,8 @@ class KeyTest {
         String absolutePath = "/absolute/path";
 
         // When & Then
-        assertThatThrownBy(() -> Key.of(absolutePath))
-                .isInstanceOf(InvalidKeyException.class)
+        assertThatThrownBy(() -> ObjectKey.of(absolutePath))
+                .isInstanceOf(InvalidObjectKeyException.class)
                 .hasMessage("Object key must be a relative path, not absolute");
     }
 
@@ -186,8 +186,8 @@ class KeyTest {
         String absolutePath = "path/";
 
         // When & Then
-        assertThatThrownBy(() -> Key.of(absolutePath))
-                .isInstanceOf(InvalidKeyException.class)
+        assertThatThrownBy(() -> ObjectKey.of(absolutePath))
+                .isInstanceOf(InvalidObjectKeyException.class)
                 .hasMessage("Object key must not end with a slash, file name is missing");
     }
 }
