@@ -3,7 +3,7 @@ package org.websoso.s3.core;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.websoso.s3.core.strategy.FastMimeTypeDetectionStrategy;
+import org.websoso.s3.core.strategy.PreciseMimeTypeDetectionStrategy;
 import org.websoso.s3.exception.validation.InvalidContentTypeException;
 import org.websoso.s3.exception.validation.InvalidImageException;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -17,13 +17,15 @@ import static org.mockito.Mockito.mock;
 class S3ImageServiceTest {
 
     private S3ImageService imageService;
+    // private S3ImageService imageService;
 
     @BeforeEach
     void setUp() {
         S3Client s3Client = mock(S3Client.class);
         String bucket = "test-bucket";
 
-        imageService = new S3ImageService(s3Client, bucket, new FastMimeTypeDetectionStrategy());
+        imageService = new S3ImageService(s3Client, bucket);
+        // imageService = new S3ImageService(s3Client, bucket, new PreciseMimeTypeDetectionStrategy());
     }
 
     @DisplayName("지원하지 않는 확장자일 경우 예외를 던진다")

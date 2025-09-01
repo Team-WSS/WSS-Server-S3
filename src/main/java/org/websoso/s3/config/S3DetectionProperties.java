@@ -31,11 +31,11 @@ public class S3DetectionProperties {
     }
 
     /**
-     * MIME 감지 전략을 설정합니다. null이 들어올 경우 기본값 {@link MimeDetection#FAST}로 대체됩니다.
+     * MIME 감지 전략을 설정합니다.
      *
      * @param mimeDetection 감지 전략
      */
     public void setMimeDetection(MimeDetection mimeDetection) {
-        this.mimeDetection = (mimeDetection != null) ? mimeDetection : MimeDetection.FAST;
+        this.mimeDetection = mimeDetection;
     }
 }
