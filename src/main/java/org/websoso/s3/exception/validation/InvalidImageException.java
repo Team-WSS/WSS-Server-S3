@@ -1,6 +1,6 @@
 package org.websoso.s3.exception.validation;
 
-public class InvalidImageException extends RuntimeException {
+public class InvalidImageException extends ValidationException {
     public InvalidImageException(String message) {
         super(message);
     }

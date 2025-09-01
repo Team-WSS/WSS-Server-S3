@@ -1,6 +1,6 @@
 package org.websoso.s3.exception.validation;
 
-public class InvalidBucketNameException extends RuntimeException {
+public class InvalidBucketNameException extends ValidationException {
 
   public InvalidBucketNameException(String message) {
     super(message);

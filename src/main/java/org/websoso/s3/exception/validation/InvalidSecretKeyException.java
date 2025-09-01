@@ -1,6 +1,6 @@
 package org.websoso.s3.exception.validation;
 
-public class InvalidSecretKeyException extends RuntimeException {
+public class InvalidSecretKeyException extends ValidationException {
 
   public InvalidSecretKeyException(String message) {
     super(message);

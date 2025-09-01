@@ -1,6 +1,6 @@
 package org.websoso.s3.exception.aws.global;
 
-public class AwsCredentialsNotFoundException extends RuntimeException {
+public class AwsCredentialsNotFoundException extends AwsGlobalException {
 
     public AwsCredentialsNotFoundException(String message) {
         super(message);

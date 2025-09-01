@@ -1,6 +1,6 @@
 package org.websoso.s3.exception.validation;
 
-public class InvalidAccessKeyException extends RuntimeException {
+public class InvalidAccessKeyException extends ValidationException {
 
     public InvalidAccessKeyException(String message) {
         super(message);
