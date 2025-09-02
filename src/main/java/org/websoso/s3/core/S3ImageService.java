@@ -1,5 +1,6 @@
 package org.websoso.s3.core;
 
+import org.websoso.s3.core.strategy.FastMimeTypeDetectionStrategy;
 import org.websoso.s3.core.strategy.MimeTypeDetectionStrategy;
 import org.websoso.s3.exception.validation.InvalidImageException;
 import org.websoso.s3.modle.Bucket;
@@ -35,6 +36,16 @@ public class S3ImageService implements S3DefaultService {
         this.remover = new S3Remover(s3Client, bucketWrapper);
         this.reader = new S3Reader(s3Client, bucketWrapper);
         this.mimeDetector = mimeDetector;
+    }
+
+    public S3ImageService(S3Client s3Client, String bucket) {
+        Bucket bucketWrapper = Bucket.of(bucket);
+        FastMimeTypeDetectionStrategy fastMimeTypeDetectionStrategy = new FastMimeTypeDetectionStrategy();
+
+        this.uploader = new S3Uploader(s3Client, bucketWrapper);
+        this.remover = new S3Remover(s3Client, bucketWrapper);
+        this.reader = new S3Reader(s3Client, bucketWrapper);
+        this.mimeDetector = fastMimeTypeDetectionStrategy;
     }
 
     /**
