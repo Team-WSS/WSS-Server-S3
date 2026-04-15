@@ -28,11 +28,13 @@ class S3ClientFactoryTest {
 
     @BeforeEach
     void setUp() {
+        S3ClientFactory.clearCache();
         mockCredentials = mock(AwsCredentialsProvider.class);
         s3AccessConfig = mock(S3AccessConfig.class);
 
         when(s3AccessConfig.getRegion()).thenReturn(Region.AP_NORTHEAST_2);
         when(s3AccessConfig.getCredentialsProvider()).thenReturn(mockCredentials);
+        when(s3AccessConfig.getAccessKey()).thenReturn("test-access-key");
     }
 
     @DisplayName("같은 S3Config로 여러 번 getS3Client() 호출 시 동일한 S3Client를 반환한다.")
@@ -53,14 +55,17 @@ class S3ClientFactoryTest {
     void shouldReturnSameS3ClientForConfigsWithSameRegionAndCredentials() {
         // given
         Region region = Region.AP_NORTHEAST_2;
+        String accessKey = "shared-access-key";
 
         S3AccessConfig config1 = mock(S3AccessConfig.class);
         when(config1.getRegion()).thenReturn(region);
         when(config1.getCredentialsProvider()).thenReturn(mockCredentials);
+        when(config1.getAccessKey()).thenReturn(accessKey);
 
         S3AccessConfig config2 = mock(S3AccessConfig.class);
         when(config2.getRegion()).thenReturn(region);
         when(config2.getCredentialsProvider()).thenReturn(mockCredentials);
+        when(config2.getAccessKey()).thenReturn(accessKey);
 
         // when
         S3Client client1 = S3ClientFactory.getS3Client(config1);
@@ -99,15 +104,15 @@ class S3ClientFactoryTest {
     @Test
     void shouldCreateDifferentS3ClientInstancesForDifferentConfigs() {
         // given
-        AwsCredentialsProvider credentials1 = mock(AwsCredentialsProvider.class);
         S3AccessConfig config1 = mock(S3AccessConfig.class);
         when(config1.getRegion()).thenReturn(Region.AP_NORTHEAST_2);
-        when(config1.getCredentialsProvider()).thenReturn(credentials1);
+        when(config1.getCredentialsProvider()).thenReturn(mock(AwsCredentialsProvider.class));
+        when(config1.getAccessKey()).thenReturn("key-a");
 
-        AwsCredentialsProvider credentials2 = mock(AwsCredentialsProvider.class);
         S3AccessConfig config2 = mock(S3AccessConfig.class);
         when(config2.getRegion()).thenReturn(Region.US_WEST_1);
-        when(config2.getCredentialsProvider()).thenReturn(credentials2);
+        when(config2.getCredentialsProvider()).thenReturn(mock(AwsCredentialsProvider.class));
+        when(config2.getAccessKey()).thenReturn("key-b");
 
         // when
         S3Client client1 = S3ClientFactory.getS3Client(config1);
@@ -117,6 +122,72 @@ class S3ClientFactoryTest {
         assertThat(client1).isNotNull();
         assertThat(client2).isNotNull();
         assertThat(client1).isNotSameAs(client2);
+    }
+
+    @DisplayName("동일 리전 + 동일 accessKey → 동일 S3Client를 반환한다")
+    @Test
+    void shouldReturnSameClientForSameRegionAndSameAccessKey() {
+        // given
+        S3AccessConfig config1 = mock(S3AccessConfig.class);
+        when(config1.getRegion()).thenReturn(Region.AP_NORTHEAST_2);
+        when(config1.getCredentialsProvider()).thenReturn(mock(AwsCredentialsProvider.class));
+        when(config1.getAccessKey()).thenReturn("AKIAIOSFODNN7EXAMPLE");
+
+        S3AccessConfig config2 = mock(S3AccessConfig.class);
+        when(config2.getRegion()).thenReturn(Region.AP_NORTHEAST_2);
+        when(config2.getCredentialsProvider()).thenReturn(mock(AwsCredentialsProvider.class));
+        when(config2.getAccessKey()).thenReturn("AKIAIOSFODNN7EXAMPLE");
+
+        // when
+        S3Client client1 = S3ClientFactory.getS3Client(config1);
+        S3Client client2 = S3ClientFactory.getS3Client(config2);
+
+        // then
+        assertThat(client1).isSameAs(client2);
+    }
+
+    @DisplayName("동일 리전 + 다른 accessKey → 서로 다른 S3Client를 반환한다")
+    @Test
+    void shouldReturnDifferentClientForSameRegionButDifferentAccessKey() {
+        // given
+        S3AccessConfig config1 = mock(S3AccessConfig.class);
+        when(config1.getRegion()).thenReturn(Region.AP_NORTHEAST_2);
+        when(config1.getCredentialsProvider()).thenReturn(mock(AwsCredentialsProvider.class));
+        when(config1.getAccessKey()).thenReturn("AKIA_KEY_ONE");
+
+        S3AccessConfig config2 = mock(S3AccessConfig.class);
+        when(config2.getRegion()).thenReturn(Region.AP_NORTHEAST_2);
+        when(config2.getCredentialsProvider()).thenReturn(mock(AwsCredentialsProvider.class));
+        when(config2.getAccessKey()).thenReturn("AKIA_KEY_TWO");
+
+        // when
+        S3Client client1 = S3ClientFactory.getS3Client(config1);
+        S3Client client2 = S3ClientFactory.getS3Client(config2);
+
+        // then
+        assertThat(client1).isNotSameAs(client2);
+    }
+
+    @DisplayName("accessKey가 null인 config (기본 자격증명)는 반복 호출 시 동일한 S3Client를 반환한다")
+    @Test
+    void shouldReturnSameClientForDefaultCredentialsOnRepeatedCalls() {
+        // given
+        S3AccessConfig config1 = mock(S3AccessConfig.class);
+        when(config1.getRegion()).thenReturn(Region.AP_NORTHEAST_2);
+        when(config1.getCredentialsProvider()).thenReturn(mock(AwsCredentialsProvider.class));
+        when(config1.getAccessKey()).thenReturn(null); // DefaultCredentialsProvider 경로
+
+        S3AccessConfig config2 = mock(S3AccessConfig.class);
+        when(config2.getRegion()).thenReturn(Region.AP_NORTHEAST_2);
+        when(config2.getCredentialsProvider()).thenReturn(mock(AwsCredentialsProvider.class));
+        when(config2.getAccessKey()).thenReturn(null);
+
+        // when
+        S3Client client1 = S3ClientFactory.getS3Client(config1);
+        S3Client client2 = S3ClientFactory.getS3Client(config2);
+
+        // then — 두 인스턴스 모두 "ap-northeast-2:default" 키를 공유하므로 동일해야 한다
+        assertThat(client1).isSameAs(client2);
     }
 
 }

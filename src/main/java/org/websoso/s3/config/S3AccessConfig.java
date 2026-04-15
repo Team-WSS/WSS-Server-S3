@@ -163,4 +163,8 @@ public class S3AccessConfig {
     public AwsCredentialsProvider getCredentialsProvider() {
         return credentialsProvider;
     }
+
+    public String getAccessKey() {
+        return accessKey.getValue();
+    }
 }

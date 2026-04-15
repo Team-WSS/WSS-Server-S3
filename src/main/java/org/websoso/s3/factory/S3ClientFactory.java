@@ -36,7 +36,8 @@ public class S3ClientFactory {
     }
 
     private static String generateCacheKey(S3AccessConfig s3AccessConfig) {
-        return s3AccessConfig.getRegion().id() + "-" + s3AccessConfig.getCredentialsProvider().hashCode();
+        String accessKey = s3AccessConfig.getAccessKey();
+        return s3AccessConfig.getRegion().id() + ":" + (accessKey != null ? accessKey : "default");
     }
 
     private static S3Client createS3Client(S3AccessConfig s3AccessConfig) {
@@ -44,5 +45,9 @@ public class S3ClientFactory {
                 .region(s3AccessConfig.getRegion())
                 .credentialsProvider(s3AccessConfig.getCredentialsProvider())
                 .build();
+    }
+
+    static void clearCache() {
+        clientCache.clear();
     }
 }
