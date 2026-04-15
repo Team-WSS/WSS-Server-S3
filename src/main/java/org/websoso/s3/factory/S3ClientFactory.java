@@ -46,4 +46,8 @@ public class S3ClientFactory {
                 .credentialsProvider(s3AccessConfig.getCredentialsProvider())
                 .build();
     }
+
+    static void clearCache() {
+        clientCache.clear();
+    }
 }
