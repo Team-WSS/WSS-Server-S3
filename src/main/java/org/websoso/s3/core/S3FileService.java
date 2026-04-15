@@ -47,7 +47,7 @@ public class S3FileService implements S3DefaultService {
         S3UploadResponse response = uploader.upload(parsedObjectKey, file);
 
         if (!response.isSuccess()) {
-            S3UploadResult.fail(response);
+            return S3UploadResult.fail(response);
         }
 
         String url = reader.getUrl(parsedObjectKey);
@@ -73,7 +73,7 @@ public class S3FileService implements S3DefaultService {
         S3UploadResponse response = uploader.upload(parsedObjectKey, file, ContentType.of(contentType));
 
         if (!response.isSuccess()) {
-            S3UploadResult.fail(response);
+            return S3UploadResult.fail(response);
         }
 
         String url = reader.getUrl(parsedObjectKey);
@@ -100,7 +100,7 @@ public class S3FileService implements S3DefaultService {
         S3UploadResponse response = uploader.upload(parsedObjectKey, inputStream, ContentType.of(contentType), ContentLength.of(contentLength));
 
         if (!response.isSuccess()) {
-            S3UploadResult.fail(response);
+            return S3UploadResult.fail(response);
         }
 
         String url = reader.getUrl(parsedObjectKey);
